@@ -2,9 +2,17 @@ import requests
 from bs4 import BeautifulSoup
 
 
+def download_image(url, file_path):
+    r = requests.get(url, stream=True)
+
+    if r.status_code == 200:
+        with open(file_path, "wb") as f:
+            f.write(r.content)
+
+
 if __name__ == '__main__':
     page_url_base = 'https://www.arita-marukei.com/?mode=cate&cbid=2482976&csid=0'
-    page_num = 52
+    page_num = 1
     img_url_base = 'https://www.arita-marukei.com/'
     urls = []
 
@@ -20,4 +28,17 @@ if __name__ == '__main__':
             # print('herf:{}'.format(a_element.get('href')))
             urls.append(img_url_base + a_element.get('href'))
 
-    print(urls)
+    print(*urls, sep='\n')
+
+    for url in urls:
+        r = requests.get(url)
+        soup = BeautifulSoup(r.text)
+        contents = soup.find('ul', class_='product__gallery')
+        img_elements = contents.find_all('img')
+        img_urls = []
+        for img_elements in img_elements:
+            img_urls.append(img_elements.get('src'))
+        print(*img_urls, sep='\n')
+        exit()
+
+
