@@ -39,6 +39,10 @@ if __name__ == '__main__':
         for img_elements in img_elements:
             img_urls.append(img_elements.get('src'))
         print(*img_urls, sep='\n')
-        exit()
+        for i, img_url in enumerate(img_urls):
+            file_name = '{}_{}.png'.format(url[url.find('=') + 1:], i)
+            image_path = 'images/{}'.format(file_name)
+            download_image(url=img_url, file_path=image_path)
+
 
 
