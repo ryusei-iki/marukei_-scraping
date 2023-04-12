@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import pandas as pd
 
 
 def download_image(url, file_path):
@@ -16,19 +17,9 @@ if __name__ == '__main__':
     img_url_base = 'https://www.arita-marukei.com/'
     urls = []
 
-    # 有田焼一覧からそれぞれのリンクを取得
-    for page in range(1, page_num + 1):
-        if (page == 1):
-            r = requests.get(page_url_base)
-        else:
-            r = requests.get(page_url_base + '&page=' + str(page))
-        soup = BeautifulSoup(r.text)
-        contents = soup.find('ul', class_='row-list row-list--middle')
-        a_elements = contents.find_all('a')
-        for a_element in a_elements:
-            # print('herf:{}'.format(a_element.get('href')))
-            urls.append(img_url_base + a_element.get('href'))
-        print('page:{}={}'.format(page, len(a_elements)))
+    # csvからリンクの取得
+    df = pd.read_csv('40_urls.csv')
+    urls = list(df['URL'])
 
     # 取得したリンクから画像を取得
     for i, url in enumerate(urls):
@@ -43,5 +34,5 @@ if __name__ == '__main__':
         # print(*img_urls, sep='\n')
         for i, img_url in enumerate(img_urls):
             file_name = '{}_{}.png'.format(url[url.find('=') + 1:], i)
-            image_path = 'images_sara/{}'.format(file_name)
+            image_path = 'images_40/{}'.format(file_name)
             download_image(url=img_url, file_path=image_path)
